@@ -1744,7 +1744,7 @@ unittest {
     assert(approxEqual(invLaplaceCDF(0.82), 1.0217));
 }
 
-double kolmDist()(double x) {
+deprecated double kolmDist()(double x) {
     pragma(msg, "kolmDist is scheduled for deprecation.  Please use " ~
         "kolmogorovDistrib instead.");
         
@@ -1781,8 +1781,8 @@ double kolmogorovDistrib(immutable double x) {
 }
 
 unittest {
-    assert(approxEqual(1 - kolmDist(.75), 0.627167));
-    assert(approxEqual(1 - kolmDist(.5), 0.9639452436));
-    assert(approxEqual(1 - kolmDist(.9), 0.39273070));
-    assert(approxEqual(1 - kolmDist(1.2), 0.112249666));
+    assert(approxEqual(1 - kolmogorovDistrib(.75), 0.627167));
+    assert(approxEqual(1 - kolmogorovDistrib(.5), 0.9639452436));
+    assert(approxEqual(1 - kolmogorovDistrib(.9), 0.39273070));
+    assert(approxEqual(1 - kolmogorovDistrib(1.2), 0.112249666));
 }
