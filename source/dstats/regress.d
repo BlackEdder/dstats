@@ -651,6 +651,7 @@ RegressRes linearRegress(U, TC...)(U Y, TC input) {
     }
     auto p = new double[betas.length];
 
+    import std.algorithm : min;
     foreach(i, beta; betas) {
         try {
             p[i] = 2 * min(studentsTCDF(beta / stdErr[i], df),
@@ -871,6 +872,7 @@ private MeanSD[] calculateSummaries(X...)(X xIn, RegionAllocator alloc) {
     ret[] = MeanSD.init;
 
     static if(allHaveLength) {
+        import std.algorithm : min;
         size_t minLen = size_t.max;
         foreach(range; x) {
             minLen = min(minLen, range.length);
@@ -925,6 +927,7 @@ private struct PreprocessedData {
 
 private PreprocessedData preprocessStandardize(Y, X...)
 (Y yIn, X xIn, RegionAllocator alloc) {
+    import std.algorithm : min, map, reduce;
     static if(X.length == 1 && isRoR!(X[0])) {
         auto xRaw = alloc.array(xIn[0]);
     } else {
@@ -1053,6 +1056,7 @@ private void coordDescent(
         }
     }
 
+    import std.algorithm : reduce, max, map;
     if(reduce!max(0.0, map!abs(betas)) > 0) {
         makePredictions();
     }
@@ -1569,6 +1573,7 @@ LogisticRes logisticRegress(T, V...)(T yIn, V input) {
 }
 
 unittest {
+    import std.algorithm : filter;
     // Values from R.  Confidence intervals from confint.default().
     // R doesn't automatically calculate likelihood ratio P-value, and reports
     // deviations instead of log likelihoods.  Deviations are just
@@ -2115,6 +2120,7 @@ public:
         immutable maxDist = computeMaxDist(x[firstNeighbor..lastNeighbor + 1], point);
         auto w = alloc.uninitializedArray!(double[])(yNeighbors.length);
         foreach(j, neighbor; x[firstNeighbor..lastNeighbor + 1]) {
+            import std.algorithm : max;
             immutable diff = abs(point - neighbor);
             w[j] = max(0, (1 - (diff / maxDist) ^^ 3) ^^ 3);
             if(robustness > 0) {
@@ -2221,6 +2227,7 @@ double biweight(double x) pure nothrow @safe {
 }
 
 double computeMaxDist(const double[] stuff, double x) pure nothrow @safe {
+    import std.algorithm : max;
     double ret = 0;
     foreach(elem; stuff) {
         ret = max(ret, abs(elem - x));
@@ -2272,6 +2279,8 @@ LogisticRes logisticRegressImpl(T, V...)
     ret.logLikelihood = doMLENewton(ret.betas, ret.stdErr, ridge, y, x);
 
     if(!inference) return ret;
+
+    import std.algorithm : filter;
 
     static bool hasNaNs(R)(R range) {
         return !filter!isNaN(range).empty;
@@ -2383,6 +2392,7 @@ private void logisticRegressPenalizedImpl(Y, X...)
         }
     }
 
+    import std.algorithm : reduce;
     foreach(iter; 0..maxIter) {
         evalPs(betas[0], ps, betas[1..$], x);
         immutable lh = logLikelihood(ps, y);
@@ -2473,6 +2483,7 @@ double[] calculateMSEs(U...)(U xIn, RegionAllocator alloc) {
         alias xIn x;
     }
 
+    import std.algorithm : min;
     size_t minLen = size_t.max;
     foreach(r; x) {
         static if(!isInfinite!(typeof(r))) {
