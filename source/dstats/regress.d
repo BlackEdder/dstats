@@ -2237,6 +2237,7 @@ double computeMaxDist(const double[] stuff, double x) pure nothrow @safe {
 }
 
 double absMax(double a, double b) {
+    import std.algorithm : max;
     return max(abs(a), abs(b));
 }
 

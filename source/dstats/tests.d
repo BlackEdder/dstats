@@ -33,13 +33,15 @@ module dstats.tests;
 import std.functional, std.range, std.conv, std.math, std.traits,
        std.exception, std.typetuple;
 
-import std.algorithm : reverse, copy;
+private import std.algorithm : reverse, copy, min, 
+        max, map, swap, reduce;
+static import std.algorithm;
 
 import dstats.base, dstats.distrib, dstats.alloc, dstats.summary, dstats.sort;
     
 static import dstats.cor;
 
-private static import dstats.infotheory;
+private import dstats.infotheory;
 
 version(unittest) {
     import std.stdio, dstats.random;
@@ -2691,9 +2693,9 @@ unittest {
 package double toContingencyScore(T, U, Uint)
 (T x, U y, double function(double, double) elemFun,
  out uint xFreedom, out uint yFreedom, out uint nPtr) {
+    import dstats.infotheory : NeedsHeap;
 
-    enum needsHeap = dstats.infotheory.NeedsHeap!T ||
-        dstats.infotheory.NeedsHeap!U;
+    enum needsHeap = NeedsHeap!T || NeedsHeap!U;
     alias dstats.infotheory.ObsEnt!(ElementType!T, ElementType!U) ObsType;
 
     static if(needsHeap) {
